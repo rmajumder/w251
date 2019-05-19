@@ -1,1 +1,2 @@
-# w251
+# w251-assignments
+251 homework and assignments
