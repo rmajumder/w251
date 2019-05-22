@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 import time
 
 #jetson mqtt broker container's IP
-tx_broker_address="172.17.0.3"
+tx_broker_address="172.17.0.2"
 #cloud vm IP (mqtt broker)
 cl_broker_address = "xxx.xx.xxx.xx"
 
@@ -17,17 +17,17 @@ print("Connecting to Cloud broker")
 client_cl.connect(cl_broker_address) #connect to cloud mqtt broker
 
 def on_message(client, userdata, message):
-    print("message received " ,str(message.payload.decode("utf-8")))
+    print("message received " ,str(message.payload))
     print("message userdata " , userdata)
     print("message client " , client)
-        
+
     send_message_to_cloud_broker(message)
 
 def send_message_to_cloud_broker(message):
     print("Publishing message to cloud topic", "cl/faceimgtopic")
     
     try:
-        client_cl.publish("cl/faceimgtopic", str(message.payload))
+        client_cl.publish("cl/faceimgtopic", message.payload, qos=1)
     except Exception as inst:
         print(inst) 
 

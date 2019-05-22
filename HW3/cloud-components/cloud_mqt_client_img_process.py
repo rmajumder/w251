@@ -10,7 +10,7 @@ print("Creating client instance - cl broker")
 client_cl = mqtt.Client("TX2CL") #create new instance
 
 def on_message(client, userdata, message):
-    print("message received " ,str(message.payload.decode("utf-8")))
+    print("message received " ,str(message.payload))
     print("message userdata " , userdata)
     print("message client " , client)
     process_and_upload_obj_to_cloud_storage(message)
@@ -23,7 +23,7 @@ def process_and_upload_obj_to_cloud_storage(message):
 
         #convert base64 string to jpg image file
         with open(img_path, "wb") as fh:
-            fh.write(base64.decodestring(message.payload))
+            fh.write(bytearray(message.payload))
 
         #pass the image to upload in the bucket - test-rm-w251-bucket
         cloud_img_uploader_to_bucket.multi_part_upload("test-rm-w251-bucket", img_name, img_path)

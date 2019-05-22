@@ -7,7 +7,7 @@ import time
 import base64
 
 #local mqtt container's IP
-tx_broker_address="172.17.0.3"
+tx_broker_address="172.17.0.2"
 
 print("Creating client instance - tx broker")
 client_tx = mqtt.Client("TX2CL1") #create new instance
@@ -25,14 +25,14 @@ def get_and_save_wm_image():
 
         # Our operations on the frame come here
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        cv2.imwrite("./images/frame%d.jpg" % count, frame) 
+        rc, faceimg = cv2.imencode(".jpg", frame) 
 		
         # Display the resulting frame
         cv2.imshow('frame',gray)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 		
-        publish_msg("./images/frame%d.jpg" % count)
+        publish_msg(faceimg)
 		
         count += 1
 
@@ -40,13 +40,10 @@ def get_and_save_wm_image():
     cap.release()
     cv2.destroyAllWindows()
 	
-def publish_msg(imgpath):
-    encoded_string = ""
-    with open(imgpath, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+def publish_msg(fimg):
+    msg = fimg.tobytes()
 
     print("Publishing message to cloud topic", "tx/faceimgtopic")
-    client_tx.publish("tx/faceimgtopic", encoded_string)
+    client_tx.publish("tx/faceimgtopic", msg)
 	
 get_and_save_wm_image()
-

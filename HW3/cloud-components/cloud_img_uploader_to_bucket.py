@@ -1,6 +1,7 @@
 #Reference: https://cloud.ibm.com/docs/services/cloud-object-storage/libraries?topic=cloud-object-storage-python
 
 import ibm_boto3
+import os
 from ibm_botocore.client import Config, ClientError
 
 # Constants for IBM COS values
@@ -59,6 +60,9 @@ def multi_part_upload(bucket_name, item_name, file_path):
             )
 
         print("Transfer for {0} Complete!\n".format(item_name))
+
+	os.remove(file_path)
+	print("File removed from local drive")
     except ClientError as be:
         print("CLIENT ERROR: {0}\n".format(be))
     except Exception as e:
